@@ -1,44 +1,28 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Tester : MonoBehaviour
+public class FlippingCard1 : MonoBehaviour
 {
-    public List<Card> thisCard = new List<Card>();
-    public int thisId;
+    [SerializeField]
+    public  GameObject cardBack;
 
-    public int id;
-    public string cardName;
+    public  bool cardBackIsActive = false;
 
-    public Text nameText;
-
-    public Image cardImage;
-
-    // Start is called before the first frame update
-    void Start()
+    public void StartFlip()
     {
-        Debug.Log("i got the cards from the list");
-        thisCard.Add(CardDatabase.Cards[thisId]);
-
-        // Get the Image component from the GameObject
-        cardImage = GetComponentInChildren<Image>();
+        StartCoroutine(FlipCard());
     }
 
-    // Update is called once per frame
-    void Update()
+       IEnumerator FlipCard()
     {
-        if (thisCard.Count > 0)
+        for (int i = 0; i < 180; i++)
         {
-            id = thisCard[0].id;
-            cardName = thisCard[0].cardName;
-
-            nameText.text = cardName;
-
-            if (cardImage != null)
-            {
-                cardImage.sprite = thisCard[0].thisImage;
-            }
+            yield return new WaitForSeconds(0.01f);
+            transform.Rotate(new Vector3(0, 1, 0));
         }
+
+        cardBackIsActive = !cardBackIsActive;
+        cardBack.SetActive(cardBackIsActive);
     }
 }

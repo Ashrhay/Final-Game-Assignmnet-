@@ -1,6 +1,8 @@
+using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class FlippingCard : MonoBehaviour
 {
@@ -14,42 +16,30 @@ public class FlippingCard : MonoBehaviour
     public bool cardBackIsActive;
 
     [SerializeField]
-    public int timer; 
+    public int timer;
+
+    [SerializeField]
+    public Button ShoreUp;
+
+    public int flag = 2; // Initial value of the flag (2 for card front, 1 for card back)
+    
 
     // Start is called before the first frame update
     void Start()
     {
-        cardBackIsActive = false; 
+        cardBackIsActive = false;
+        UpdateCardState(); // Update the card state based on the initial flag value
     }
 
-    // Update is called once per frame
-    void Update()
+    public void StartFlip()
     {
-      if (Input.GetMouseButtonDown(0))
-        {
-            StartFlip(); 
-        }  
-    }
-
-    public void StartFlip ()
-    {
-        StartCoroutine(CalculateFlip()); 
+        StartCoroutine(CalculateFlip());
     }
 
     public void Flip()
     {
-        if (cardBackIsActive == true) 
-        {
-
-         cardBack.SetActive(false);
-         cardBackIsActive = false;
-
-        }
-        else
-        {
-            cardBack.SetActive(true);
-            cardBackIsActive = true;
-        }
+        flag = (flag == 2) ? 1 : 2; // Toggle between 2 and 1
+        UpdateCardState(); // Update the card state based on the new flag value
     }
 
     IEnumerator CalculateFlip()
@@ -57,7 +47,7 @@ public class FlippingCard : MonoBehaviour
         for (int i = 0; i < 180; i++)
         {
             yield return new WaitForSeconds(0.01f);
-            transform.Rotate(new Vector3 (x, y, z));
+            transform.Rotate(new Vector3(x, y, z));
             timer++;
 
             if (timer == 90 || timer == -90)
@@ -66,5 +56,29 @@ public class FlippingCard : MonoBehaviour
             }
         }
         timer = 0;
+    }
+
+    private void UpdateCardState()
+    {
+        if (flag == 2)
+        {
+            cardBack.SetActive(false);
+            cardBackIsActive = false;
+        }
+        else if (flag == 1)
+        {
+            cardBack.SetActive(true);
+            cardBackIsActive = true;
+            ShoreUp.interactable = false; 
+
+        }
+
+    }
+    public void OnDisable()
+    {
+        if (flag == 1)
+        {
+            ShoreUp.interactable = false;
+        }
     }
 }
